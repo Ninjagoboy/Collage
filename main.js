@@ -1,32 +1,67 @@
-//https://teachablemachine.withgoogle.com/models/U2BiXLnDV/
-Webcam.set({
-    width: 350,
-    height: 300,
-    image_format: 'png', 
-    png_quality: 90
-})
-Webcam.attach('#camera')
-camera = document.getElementById("camera");
-function take_snapshot(){
+var SpeechRecognition = window.webkitSpeechRecognition;
+var content;
+var recognition = new SpeechRecognition();
+
+function start(){
+    recognition.start();
+}
+
+recognition.onresult = function(event) 
+{ console.log(event); 
+    Content = event.results[0][0].transcript.toLowerCase(); 
+    console.log(Content); 
+    if (Content == "selfie") { speak(); 
+    }
+ }
+ camera = document.getElementById("camera");
+ Webcam.set({
+    width: 500, 
+    height: 400, 
+    image_format:'jpeg',
+    jpeg_quality: 90
+ })
+ function take_snapshot(){
+    console.log(img_id);
     Webcam.snap(function(data_URI){
-        document.getElementById("result").innerHTML = '<img id="captured_image"'+ data_URI+'"/>';
-    });
-}
-Classifier = ml5.imageClassifier("https://teachablemachine.withgoogle.com/models/U2BiXLnDV/model.json", modelLoaded);
-function modelLoaded(){
-    console.log("model loaded")
-}
-function gotResult(error, result){
-    if(error){
-        console.error(error);
-    }
-    else{
-        console.log(result);
-        document.getElementById("Object_name").innerHTML = result[0].label;
-        document.getElementById("Accuracy").innerHTML = result[0].confidence.toFixed(3);
-    }
-}
-function check(){
-    img = document.getElementById("selfie_image");
-    Classifier.classify(img, gotResult) 
-}
+        if(img_id=="selfie1"){
+            document.getElementById("result1").innerHTML = '<img id = "selfie1" src = "' + data_URI + '"/>';
+
+        }
+        if(img_id=="selfie2"){
+            document.getElementById("result2").innerHTML = '<img id = "selfie2" src = "' + data_URI + '"/>';
+            
+        }
+        if(img_id=="selfie3"){
+            document.getElementById("result3").innerHTML = '<img id = "selfie3" src = "' + data_URI + '"/>';
+            
+        }     
+    })
+ }
+ function speak(){
+var synth = window.speechSynthesis;
+Webcam.attach(camera)
+speak_data = "Taking your next selfie in 5 saeconds"; 
+var utterThis = new SpeechSynthesisUtterance(speak_data);
+synth.speak(utterThis);
+setTimeout(function(){
+    img_id = "selfie1";
+    take_snapshot();
+    speak_data = "Taking your next selfie in 10 saeconds"; 
+var utterThis = new SpeechSynthesisUtterance(speak_data);
+synth.speak(utterThis);
+
+}, 5000);
+setTimeout(function(){
+    img_id = "selfie2";
+    take_snapshot();
+    speak_data = "Taking your next selfie in 15 saeconds"; 
+var utterThis = new SpeechSynthesisUtterance(speak_data);
+synth.speak(utterThis);
+
+}, 10000);
+setTimeout(function(){
+    img_id = "selfie3";
+    take_snapshot();
+  
+}, 15000);
+ }
